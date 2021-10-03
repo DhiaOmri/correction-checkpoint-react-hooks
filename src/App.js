@@ -1,23 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
+import AddMovie from './components/AddMovie/AddMovie';
+import { moviesData } from './components/MoviesData';
+import MoviesList from './components/MoviesList';
+import SearchMovie from './components/SearchMovie/SearchMovie';
 
 function App() {
+  const [moviesList, setMoviesList] = useState(moviesData);
+  const [nameSearch, setNameSearch] = useState('');
+  const [ratingSearch, setRatingSearch] = useState(null);
+
+  const filterByName = () => {
+    // nameSearch &&
+    setMoviesList(
+      moviesData.filter((el) =>
+        el.name.toLowerCase().startsWith(nameSearch.toLowerCase().trim())
+      )
+    );
+  };
+
+  const filterByRating = () => {
+    ratingSearch &&
+      setMoviesList(moviesData.filter((el) => el.rating === ratingSearch));
+  };
+
+  const addNewMovie = (newMovie) => {
+    moviesData.push(newMovie);
+    setMoviesList([...moviesList, newMovie]);
+  };
+
+  useEffect(() => {
+    filterByName();
+    // eslint-disable-next-line
+  }, [nameSearch]);
+
+  useEffect(() => {
+    filterByRating();
+    // eslint-disable-next-line
+  }, [ratingSearch]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <SearchMovie
+        setNameSearch={setNameSearch}
+        ratingSearch={ratingSearch}
+        setRatingSearch={setRatingSearch}
+      />
+      <MoviesList
+        moviesList={moviesList}
+        nameSearch={nameSearch}
+        ratingSearch={ratingSearch}
+      />
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <AddMovie addNewMovie={addNewMovie} />
+      </div>
     </div>
   );
 }
